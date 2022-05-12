@@ -34,6 +34,9 @@ tracer = trace.get_tracer(__name__)
 def hello():
     with tracer.start_as_current_span("example-request"):
         requests.get("http://www.example.com")
+        requests.get("https://google.com")
+    with tracer.start_as_current_span("additional-request"):
+        requests.get("https://www.amazon.com")
     return "hello"
 
 
