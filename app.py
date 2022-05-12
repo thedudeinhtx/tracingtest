@@ -5,16 +5,22 @@ import requests
 from opentelemetry import trace
 from opentelemetry.instrumentation.flask import FlaskInstrumentor
 from opentelemetry.instrumentation.requests import RequestsInstrumentor
+from opentelemetry.exporter.zipkin.proto.http import ZipkinExporter
 from opentelemetry.sdk.trace import TracerProvider
 from opentelemetry.sdk.trace.export import (
     BatchSpanProcessor,
     ConsoleSpanExporter,
 )
+from opentelemetry.sdk.resources import SERVICE_NAME, Resource
 
-trace.set_tracer_provider(TracerProvider())
-trace.get_tracer_provider().add_span_processor(
-    BatchSpanProcessor(ConsoleSpanExporter())
-)
+resource = Resource(attributes={SERVICE_NAME: "tracingapp"})
+
+zipkin_exporter = ZipkinExporter(endpoint = "http://my-jaeger-agent.tracing.svc:5775/api/v2/spans")
+
+provider = TracerProvider(resource=resource)
+processor = BatchSpanProcessor(zipkin_exporter)
+trace.set_tracer_provider(provider)
+provider.add_span_processor(processor)
 
 app = flask.Flask(__name__)
 FlaskInstrumentor().instrument_app(app)
