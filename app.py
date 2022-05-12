@@ -15,7 +15,7 @@ from opentelemetry.sdk.resources import SERVICE_NAME, Resource
 
 resource = Resource(attributes={SERVICE_NAME: "tracingapp"})
 
-zipkin_exporter = ZipkinExporter(endpoint = "http://my-jaeger-agent.tracing.svc:5775/api/v2/spans")
+zipkin_exporter = ZipkinExporter(endpoint = "http://jaeger-all-in-one-inmemory-agent.tracing.svc:5775/api/v2/spans")
 
 provider = TracerProvider(resource=resource)
 processor = BatchSpanProcessor(zipkin_exporter)
